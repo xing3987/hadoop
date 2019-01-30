@@ -3,11 +3,9 @@ package hadoop;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import sun.nio.ch.IOUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,7 +20,6 @@ public class HdfsController {
         //上传
         put(fs);
         return;
-
     }
 
     /**

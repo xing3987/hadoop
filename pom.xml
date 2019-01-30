@@ -15,4 +15,15 @@
             <version>2.6.5</version>
         </dependency>
     </dependencies>
+
+    <!--指定包名-->
+    <build>
+        <finalName>hadoopJob</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
