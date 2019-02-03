@@ -77,7 +77,6 @@ public class WordCountApp {
         String outputPath = args[1];
         //创建配置
         Configuration conf = new Configuration();
-        conf.set("fs.defaultFS", "hdfs://hadoop001:9000");
         //获取名称
         String jobName = WordCountApp.class.getSimpleName();
         Job job = Job.getInstance(conf, jobName);

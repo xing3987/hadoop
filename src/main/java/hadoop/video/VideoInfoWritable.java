@@ -7,11 +7,11 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class VideoInfoWritable implements Writable{
-
     private Long gold;
     private Long watchnumpv;
     private Long follower;
     private Long length;
+
 
     public Long getGold() {
         return gold;
@@ -56,6 +56,6 @@ public class VideoInfoWritable implements Writable{
 
     @Override
     public String toString() {
-        return  gold +"/t" + watchnumpv +"/t" + follower +"/t" + length;
+        return "gold:"+ gold +"\t watchnumpv:" + watchnumpv +"\t follower:" + follower +"\t length:" + length;
     }
 }
