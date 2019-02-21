@@ -1,9 +1,7 @@
 package hadoop.video;
 
-import hadoop.WordCountApp;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -47,5 +45,7 @@ public class VideoJob {
 
         //提交job,等待执行成功
         job.waitForCompletion(true);
+
+
     }
 }
