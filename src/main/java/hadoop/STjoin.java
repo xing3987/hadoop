@@ -71,6 +71,18 @@ public class STjoin {
                 }
 
             }
+            /*
+             * 数据说明：
+             *          （优先输出这个）当key为jack时..(map 自动按字母顺序排列)tom alice;tom jesse;jone alice;jone jesse;
+             *          （然后）当key为lucy时map：
+             *                  lucy: tom 1 tom lucy/jone 1 jone lucy/ lucy 2 lucy mary/lucy 2 lucy ben
+             *          reduce:
+             *                  grandchild[0] = tom;grandchild[1] = jone;
+             *                  grandparent[0] = mary;grandparent[1] = ben;
+             *          输出:
+             *                  tom mary;tom ben;jone mary;jone ben;
+             *
+             */
             //grandchild和grandparent数组求笛卡尔积
             if (grandchildnum != 0 && grandparentnum != 0) {
                 for (int m = 0; m < grandchildnum; m++) {
