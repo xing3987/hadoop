@@ -63,21 +63,21 @@ public class RemoveDuplicate {
         //创建配置
         Configuration conf = new Configuration();
         //获取名称
-        String jobName = WordCountApp.class.getSimpleName();
+        String jobName = RemoveDuplicate.class.getSimpleName();
         Job job = Job.getInstance(conf, jobName);
 
         //组装jar包必备代码
-        job.setJarByClass(WordCountApp.class);
+        job.setJarByClass(RemoveDuplicate.class);
 
         //设置程序输入输出路径
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, new Path(outputPath));
         //设置map相关参数
-        job.setMapperClass(WordCountApp.MyMapper.class);
+        job.setMapperClass(RemoveDuplicate.MyMapper.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(LongWritable.class);
         //设置reduce相关参数
-        job.setReducerClass(WordCountApp.MyReduce.class);
+        job.setReducerClass(RemoveDuplicate.MyReduce.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
