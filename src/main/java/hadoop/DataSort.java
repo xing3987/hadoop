@@ -12,7 +12,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * 数据排序，如成绩等
@@ -21,7 +20,7 @@ public class DataSort {
     /*
     把输入的value做为key输出,使用hadoop对key的自动排列规则来对数据进行排列
      */
-    public static class SortMap extends Mapper<LongWritable, Text, LongWritable, LongWritable>{
+    public static class SortMap extends Mapper<LongWritable, Text, LongWritable, LongWritable> {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String line = value.toString();
@@ -29,32 +28,36 @@ public class DataSort {
             LongWritable v2 = new LongWritable();
             k2.set(Long.parseLong(line));
             v2.set(1);
-            System.out.println("key:"+k2+"******** value:"+v2);
-            context.write(k2,v2);
+            System.out.println("key:" + k2 + "******** value:" + v2);
+            context.write(k2, v2);
         }
     }
 
     public static class SortReduce extends Reducer<LongWritable, LongWritable, LongWritable, LongWritable> {
-        private static LongWritable linenum=new LongWritable(1);
+        private static LongWritable linenum = new LongWritable(1);
+
         @Override
         protected void reduce(LongWritable key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException {
-            for(LongWritable value:values){
-                System.out.println("linenum:"+linenum+"******** key:"+key);
-                context.write(key,null);
-                linenum=new LongWritable(linenum.get()+1);
+            for (LongWritable value : values) {
+                System.out.println("linenum:" + linenum + "******** key:" + key);
+                context.write(key, null);
+                linenum = new LongWritable(linenum.get() + 1);
             }
         }
     }
 
-    public static class SortPartition extends Partitioner<LongWritable, LongWritable>{
+    /*
+    如果数据量大时,可能会分成多个区去显示，就可以用这个分区规则去实现,在本例中也可以不用
+     */
+    public static class SortPartition extends Partitioner<LongWritable, LongWritable> {
         @Override
         public int getPartition(LongWritable key, LongWritable value, int i) {
-            int Maxnum=65223;
-            int bound =Maxnum/i +1;
-            long keynum=key.get();
-            for(int j=1;j<i;j++){
-                if(keynum<bound*j && keynum >= bound*(i-1)){
-                    return j-1;
+            int Maxnum = 65223;
+            int bound = Maxnum / i + 1;
+            long keynum = key.get();
+            for (int j = 1; j < i; j++) {
+                if (keynum < bound * j && keynum >= bound * (i - 1)) {
+                    return j - 1;
                 }
             }
             return -1;
