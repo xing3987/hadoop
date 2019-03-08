@@ -1,4 +1,4 @@
-package hadoop;
+package hadoop.main;
 
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -13,7 +13,11 @@ import java.io.IOException;
 public class HdfsController {
     public static void main(String[] args) throws Exception{
         //创建配置
+        //构造时会先加载jar包中的默认配置(hadoop-common.jar,hadoop-hdfs.jar),
+        // 然后会加载classpath中的core-default.xml hdfs-default.xml core-site.xml
+        //最后加载set中的值，所以最后加载的会覆盖最先加载的配置
         Configuration conf=new Configuration();
+
         conf.set("fs.defaultFS","hdfs://hadoop001:9000");
         //获取操作的hdfs对象
         FileSystem fs= FileSystem.get(conf);
