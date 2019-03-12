@@ -35,7 +35,7 @@ public class HdfsClientDemo {
      */
     @Test
     public void downLoadFromHadoop() throws Exception {
-        fs.copyToLocalFile(new Path("/mydata"), new Path("F:\\"));//第一个参数是hadoop集群的文件路径，第二个参数是本地路径
+        fs.copyToLocalFile(new Path("/logs/"), new Path("F:\\"));//第一个参数是hadoop集群的文件路径，第二个参数是本地路径
     }
 
     @Test
