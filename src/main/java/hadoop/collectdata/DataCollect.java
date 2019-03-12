@@ -1,7 +1,6 @@
 package hadoop.collectdata;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  *  日志采集
@@ -20,6 +19,7 @@ import java.util.TimerTask;
 public class DataCollect {
     public static void main(String[] args) {
         Timer timer=new Timer();
-        timer.schedule(new CollectTask(),0,60*60*1000l);
+        timer.schedule(new CollectTask(),0,60*60*1000l);//自动采集数据并上传
+        timer.schedule(new DeleteTask(),12,24*60*60*1000l);//自动删除过期数据(12小时后执行，每一天执行一次，删除一个月前的数据)
     }
 }
