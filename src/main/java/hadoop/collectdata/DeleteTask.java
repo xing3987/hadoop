@@ -1,5 +1,7 @@
 package hadoop.collectdata;
 
+import hadoop.helper.Constants;
+import hadoop.helper.PropertyHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -10,7 +12,7 @@ import java.util.TimerTask;
 
 public class DeleteTask extends TimerTask {
     Logger logger=Logger.getLogger(DeleteTask.class);
-    private final String COPY_FILE = "g:/logs/copys/";
+    private final String COPY_FILE = PropertyHelper.getProperty(Constants.COPY_FILE);
     @Override
     public void run() {
         SimpleDateFormat sd=new SimpleDateFormat("yyyyMMdd");

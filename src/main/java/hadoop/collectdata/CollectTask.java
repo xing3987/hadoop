@@ -1,5 +1,7 @@
 package hadoop.collectdata;
 
+import hadoop.helper.Constants;
+import hadoop.helper.PropertyHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -23,10 +25,11 @@ import java.util.UUID;
  */
 public class CollectTask extends TimerTask {
     Logger logger = Logger.getLogger(CollectTask.class);
-    private final String TEMPORARY_FILE = "g:/logs/temporary";
-    private final String COPY_FILE = "g:/logs/copys/";
-    private final String HDFS_FILE = "/logs/";
-    private final String HDFS_URI = "hdfs://hadoop001:9000";
+    private final String DATA_FILE = PropertyHelper.getProperty(Constants.DATA_FILE);
+    private final String TEMPORARY_FILE = PropertyHelper.getProperty(Constants.TEMPORARY_FILE);
+    private final String COPY_FILE = PropertyHelper.getProperty(Constants.COPY_FILE);
+    private final String HDFS_FILE = PropertyHelper.getProperty(Constants.HDFS_FILE);
+    private final String HDFS_URI = PropertyHelper.getProperty(Constants.HDFS_URI);
 
     @Override
     public void run() {
@@ -35,7 +38,7 @@ public class CollectTask extends TimerTask {
         SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
         String datastr = sd.format(new Date());
 
-        File dir = new File("g:/logs/logdatas/");
+        File dir = new File(DATA_FILE);
         //过滤需要的文件，以.log名字结尾的log文件
         logger.debug("begin to get files by filefilter.");
         File[] listFiles = dir.listFiles(new FileFilter() {
