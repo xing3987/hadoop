@@ -1,4 +1,4 @@
-package hadoop.main;
+package hadoop.hdfs;
 
 
 import org.apache.commons.compress.utils.IOUtils;
