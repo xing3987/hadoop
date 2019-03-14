@@ -11,4 +11,8 @@ public class Constants {
     public static final String HDFS_FILE = "HDFS_FILE";
     public static final String HDFS_URI = "HDFS_URI";
 
+    public static final String HDFS_WORDCOUNT_INPUT_PATH = "HDFS_WORDCOUNT_INPUT_PATH";
+    public static final String HDFS_WORDCOUNT_OUTPUT_PATH = "HDFS_WORDCOUNT_OUTPUT_PATH";
+    public static final String HDFS_WORDCOUNT_MAPPER = "HDFS_WORDCOUNT_MAPPER";
+
 }
