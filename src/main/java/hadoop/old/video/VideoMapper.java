@@ -1,4 +1,4 @@
-package hadoop.video;
+package hadoop.old.video;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

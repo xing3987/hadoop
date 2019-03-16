@@ -1,4 +1,4 @@
-package hadoop.video;
+package hadoop.old.video;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;

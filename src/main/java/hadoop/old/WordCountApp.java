@@ -1,4 +1,4 @@
-package hadoop;
+package hadoop.old;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -101,7 +101,7 @@ public class WordCountApp {
 
         //后续操作
         //1.maven clean package 打成jar包放到主节点服务器上
-        //2.运行hadoop jar [jarname eg:hadoopJob.jar] [jobpath eg:hadoop.WordCountApp] /inputfilepath /outputfile
+        //2.运行hadoop jar [jarname eg:hadoopJob.jar] [jobpath eg:hadoop.old.WordCountApp] /inputfilepath /outputfile
         //3.注意输出的路径在hadoop集群中不能有重名，否则会报错
         //4.等待job执行完成后查看outputfile中的数据
     }
