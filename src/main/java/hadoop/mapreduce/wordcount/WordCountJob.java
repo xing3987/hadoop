@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.net.URI;
 
 /**
- * wordcount 启动工程（window 环境下的启动）///可能是配置问题ssl无法成功
+ * wordcount 启动工程（window 环境下的启动）,注意运行的时候要先mvn clean package 打成jar包再跑
  */
 public class WordCountJob {
     public static void main(String[] args) throws Exception {
