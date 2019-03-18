@@ -14,7 +14,7 @@ import java.net.URI;
 /**
  * wordcount 启动工程（window 环境下的启动）,注意运行的时候要先mvn clean package 打成jar包再跑
  */
-public class WordCountJob {
+public class WordCountJobWindow {
     public static void main(String[] args) throws Exception {
 
         // 在代码中设置JVM系统参数，用于给job对象来获取访问HDFS的用户身份
