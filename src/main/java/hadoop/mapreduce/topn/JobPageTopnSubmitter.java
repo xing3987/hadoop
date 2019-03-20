@@ -19,7 +19,7 @@ public class JobPageTopnSubmitter {
 	public static void main(String[] args) throws Exception {
 
 		Configuration conf = new Configuration();
-
+		conf.addResource("configuration.xml");//加载自定义配置文件
 		Job job = Job.getInstance(conf);
 
 		job.setJarByClass(JobPageTopnSubmitter.class);

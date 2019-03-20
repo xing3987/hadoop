@@ -1,6 +1,7 @@
 package hadoop.mapreduce.topn;
 
 import hadoop.mapreduce.flow.FlowBean;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.TreeMap;
 
 public class PageTopnReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
 
@@ -32,7 +32,8 @@ public class PageTopnReducer extends Reducer<Text, FlowBean, Text, FlowBean> {
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         Collections.sort(list);
-        int max=5;
+        Configuration cof=context.getConfiguration();//得到配置文件
+        int max=cof.getInt("top.n",5);//从配置文件取值，如果没有默认为5
         for(int i=0;i<max;i++){
             context.write(new Text(list.get(i).getPhone()), list.get(i));
         }
