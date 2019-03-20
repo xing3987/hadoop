@@ -1,9 +1,6 @@
 package hadoop.mapreduce.topn;
 
 import hadoop.mapreduce.flow.FlowBean;
-import hadoop.mapreduce.flow.FlowCountMapper;
-import hadoop.mapreduce.flow.FlowCountReducer;
-import hadoop.mapreduce.flow.ProvincePartitioner;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;

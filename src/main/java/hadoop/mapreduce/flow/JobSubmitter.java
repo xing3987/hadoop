@@ -21,7 +21,7 @@ public class JobSubmitter {
 		job.setReducerClass(FlowCountReducer.class);
 		
 		// 设置参数：maptask在做数据分区时，用哪个分区逻辑类  （如果不指定，它会用默认的HashPartitioner）
-		job.setPartitionerClass(ProvincePartitioner.class);
+		job.setPartitionerClass(PhonePartitioner.class);
 		// 由于我们的ProvincePartitioner可能会产生6种分区号，所以，需要有6个reduce task来接收
 		job.setNumReduceTasks(6);
 
