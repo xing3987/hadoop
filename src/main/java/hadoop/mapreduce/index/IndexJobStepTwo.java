@@ -51,12 +51,16 @@ public class IndexJobStepTwo {
     public static class IndexTwoReducer extends Reducer<Text, Text, Text, Text> {
         @Override
         protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            Iterator<Text> iterator = values.iterator();
+            /*Iterator<Text> iterator = values.iterator();
             String out = "";
             while (iterator.hasNext()) {
                 out += iterator.next().toString() + "\t";
+            }*/
+            StringBuffer sb=new StringBuffer();
+            for(Text text:values){
+                sb.append(text.toString()+"\t");
             }
-            context.write(key, new Text(out));
+            context.write(key, new Text(sb.toString()));
         }
     }
 }
