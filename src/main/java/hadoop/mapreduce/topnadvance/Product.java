@@ -1,12 +1,13 @@
 package hadoop.mapreduce.topnadvance;
 
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class Product implements Writable, Comparable<Product> {
+public class Product implements WritableComparable<Product> {
 
     private String order;
     private String uid;
@@ -81,6 +82,11 @@ public class Product implements Writable, Comparable<Product> {
         this.name = input.readUTF();
         this.price = input.readDouble();
         this.count = input.readInt();
+    }
+
+    @Override
+    public String toString() {
+        return order + "," + uid + ',' + name + ',' + price + ',' + count;
     }
 
     /**

@@ -13,7 +13,7 @@ import org.apache.hadoop.io.Writable;
  *
  *
  */
-public class FlowBean implements Writable , Comparable<FlowBean> {
+public class FlowBean implements Writable , Comparable<FlowBean> {//WritableComparable<FlowBean>
 
 	private int upFlow;
 	private int dFlow;
