@@ -69,7 +69,7 @@ public class TopnadvanceJob {
     public static class TopnadvanceGroup extends WritableComparator {
 
         /**
-         * 创建构造函数用来指定writableComparator中的实现类
+         * 创建构造函数用来指定父类writableComparator中的实现类
          */
         public TopnadvanceGroup() {
             super(Product.class,true);
