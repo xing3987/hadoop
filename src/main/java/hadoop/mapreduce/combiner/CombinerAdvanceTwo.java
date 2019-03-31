@@ -13,7 +13,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * 对combinerAdvance第一阶段的数据进行再次处理
