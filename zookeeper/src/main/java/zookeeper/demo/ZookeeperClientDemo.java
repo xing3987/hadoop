@@ -1,4 +1,4 @@
-package zookeeper;
+package zookeeper.demo;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs.Ids;
@@ -59,11 +59,11 @@ public class ZookeeperClientDemo {
     }
 
     @Test
-    public void watch() throws Exception{
+    public void watcher() throws Exception{
         //添加监听事件，默认只会执行一次，如果要反复执行，可以在监听事件中再次添加监听事件
         byte[] data = zooKeeper.getData("/clientdemo", new WatchDemo(zooKeeper), null);//设置查询的监听
         System.out.println(new String(data,"UTF-8"));
-        Thread.sleep(Integer.MAX_VALUE);//使线程处于等待，以得到监听结果
+        Thread.sleep(Integer.MAX_VALUE);//使线程处于等待，以得到监听结果.监听是个守护线程，如果主线程结束了，监听也就结束了
     }
 
     @After

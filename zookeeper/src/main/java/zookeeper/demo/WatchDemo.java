@@ -1,4 +1,4 @@
-package zookeeper;
+package zookeeper.demo;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -6,6 +6,7 @@ import org.apache.zookeeper.ZooKeeper;
 
 /**
  * 创建一个监听事件，默认只会执行一次
+ * 监听事件的线程是守护线程
  */
 public class WatchDemo implements Watcher {
     private ZooKeeper zooKeeper = null;
