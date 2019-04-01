@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class DistributeConsumer {
     //定义存放数据的列表
-    private List<String> servers = new ArrayList<>();
+    private volatile List<String> servers = new ArrayList<>();
 
     private ZooKeeper zk = null;
 
