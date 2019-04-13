@@ -6,12 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="hadoops" />
         <module name="hive" />
         <module name="zookeeper" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="hadoop" target="1.8" />
+      <module name="hadoops" target="1.8" />
       <module name="hive" target="1.8" />
       <module name="zookeeper" target="1.8" />
     </bytecodeTargetLevel>
