@@ -3,6 +3,7 @@
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hadoops" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hbase" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/hive" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/zookeeper" charset="UTF-8" />
     <file url="PROJECT" charset="UTF-8" />
