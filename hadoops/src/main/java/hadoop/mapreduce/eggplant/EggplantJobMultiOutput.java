@@ -22,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * 数据分类输出到多个文件夹
+ */
 public class EggplantJobMultiOutput {
     private static Logger logger= LoggerFactory.getLogger(EggplantJob.class);
     public static void main(String[] args) throws Exception {
