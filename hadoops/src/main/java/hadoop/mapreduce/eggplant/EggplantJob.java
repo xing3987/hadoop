@@ -24,17 +24,26 @@ import java.util.Map;
 public class EggplantJob {
     private static Logger logger= LoggerFactory.getLogger(EggplantJob.class);
     public static void main(String[] args) throws Exception {
-        /*if (args.length < 2) {
+        if (args.length < 2) {
             System.exit(10);
-        }*/
+        }
         //获取程序的输入和输出目录
-        String inputPath = "G:\\datas\\input\\eggplant";//args[0];
-        String outputPath = "G:\\datas\\output\\eggplant";//args[1];
+        /*String inputPath = "G:\\datas\\input\\eggplant";
+        String outputPath = "G:\\datas\\output\\eggplant";*/
+        String inputPath = args[0];
+        String outputPath = args[1];
 
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf);
 
         job.setJarByClass(EggplantJob.class);
+
+        //也可以不要reduce阶段
+        //job.setMapperClass(EggplantMapper.class);
+        //job.setMapOutputKeyClass(Eggplant.class);
+        //job.setMapOutputValueClass(NullWritable.class);
+        //job.setNumReduceTasks(0);
+        //mapper阶段直接输出key，value为null
 
         job.setMapperClass(EggplantMapper.class);
         job.setReducerClass(EggplantReducer.class);
