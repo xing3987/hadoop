@@ -11,6 +11,9 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * 模拟茄子快传app,用户数据分析,数据清洗,筛选掉无用数据
- */
-public class EggplantJob {
-    private static Logger logger = LoggerFactory.getLogger(EggplantJob.class);
-
+public class EggplantJobMultiOutput {
+    private static Logger logger= LoggerFactory.getLogger(EggplantJob.class);
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
             System.exit(10);
@@ -38,7 +37,7 @@ public class EggplantJob {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf);
 
-        job.setJarByClass(EggplantJob.class);
+        job.setJarByClass(EggplantJobMultiOutput.class);
 
         //也可以不要reduce阶段
         //job.setMapperClass(EggplantMapper.class);
@@ -57,12 +56,14 @@ public class EggplantJob {
         job.setNumReduceTasks(1);
 
         FileInputFormat.setInputPaths(job, new Path(inputPath));
+        //先生成数据后生成文件，如果没有数据则不生成文件（默认是先生成文件）
+        LazyOutputFormat.setOutputFormatClass(job,TextOutputFormat.class);
         FileOutputFormat.setOutputPath(job, new Path(outputPath));
 
         job.waitForCompletion(true);
     }
 
-    public static class EggplantMapper extends Mapper<LongWritable, Text, Eggplant, Eggplant> {
+    private static class EggplantMapper extends Mapper<LongWritable, Text, Eggplant, Eggplant> {
         private Eggplant eggplant = new Eggplant();
 
         @Override
@@ -74,12 +75,12 @@ public class EggplantJob {
             Map<String, Object> parse = (Map) JSONObject.parse(line);
             Map<String, String> map = (Map) parse.get("header");
             Boolean flag = validateAll(map);
-            if (!flag) {
+            if(!flag){
                 return;
             }
-            if (map.get("os_name").equalsIgnoreCase("android")) {
+            if(map.get("os_name").equalsIgnoreCase("android")){
                 eggplant.setUser_id(map.get("android_id"));
-            } else {
+            }else{
                 eggplant.setUser_id(map.get("device_id"));
             }
             eggplant.setCid_sn(map.get("cid_sn"));
@@ -87,7 +88,7 @@ public class EggplantJob {
             eggplant.setOs_ver(map.get("os_ver"));
             eggplant.setMac(map.get("mac"));
             eggplant.setResolution(map.get("resolution"));
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             eggplant.setCommit_time(sf.format(new Date(Long.parseLong(map.get("commit_time")))));
             eggplant.setSdk_ver(map.get("sdk_ver"));
             eggplant.setDevice_id(map.get("device_id_type"));
@@ -114,28 +115,48 @@ public class EggplantJob {
             eggplant.setApp_id(map.get("app_id"));
             eggplant.setBuild_num(map.get("build_num"));
             eggplant.setLanguage(map.get("language"));
-            context.write(eggplant, eggplant);
+            context.write(eggplant,eggplant);
         }
     }
 
-    public static class EggplantReducer extends Reducer<Eggplant, Eggplant, Eggplant, NullWritable> {
+    private static class EggplantReducer extends Reducer<Eggplant, Eggplant, Eggplant, NullWritable> {
+
+        private MultipleOutputs<Eggplant,NullWritable> mos=null;
+
+        @Override
+        protected void setup(Context context) throws IOException, InterruptedException {
+            mos=new MultipleOutputs<>(context);
+        }
+
         @Override
         protected void reduce(Eggplant key, Iterable<Eggplant> values, Context context) throws IOException, InterruptedException {
-            context.write(key, NullWritable.get());
+            //context.write(key,NullWritable.get());
+            //使用多路输出，可以分文件夹输出
+            if(key.getOs_name().equalsIgnoreCase("android")){
+                mos.write(key,NullWritable.get(),"android/android");
+            }else if(key.getManufacture().equalsIgnoreCase("apple")){
+                mos.write(key,NullWritable.get(),"ios/ios");
+            }else{
+                mos.write(key,NullWritable.get(),"others/others");
+            }
+        }
+
+        @Override
+        protected void cleanup(Context context) throws IOException, InterruptedException {
+            mos.close();
         }
     }
 
     /**
      * 筛选出没有用的数据过滤掉
-     *
      * @param map
      * @return
      */
-    private static Boolean validateAll(Map<String, String> map) {
+    private static Boolean validateAll(Map<String,String> map) {
         if (map == null) {
             return false;
         }
-        try {
+        try{
             validateRequire(map.get("cid_sn"));
             validateRequire(map.get("mac"));
             validateRequire(map.get("commit_time"));
@@ -144,31 +165,30 @@ public class EggplantJob {
             validateRequire(map.get("city"));
             validateRequire(map.get("device_model"));
             validateRequire(map.get("app_ver_name"));
-            validateRequire(map.get("imei"));
+            //validateRequire(map.get("imei"));
             validateRequire(map.get("app_ver_code"));
             validateRequire(map.get("device_id"));
             validateRequire(map.get("release_channel"));
             validateRequire(map.get("country"));
             validateRequire(map.get("time_zone"));
             validateRequire(map.get("os_name"));
-            if (map.get("os_name").equalsIgnoreCase("android")) {
+            if(map.get("os_name").equalsIgnoreCase("android")){
                 validateRequire(map.get("android_id"));
             }
             validateRequire(map.get("commit_id"));
             validateRequire(map.get("app_token"));
             validateRequire(map.get("app_id"));
             validateRequire(map.get("language"));
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.debug(e.getMessage());
             return false;
         }
         return true;
     }
 
-    private static void validateRequire(String data) throws Exception {
+    private static void validateRequire(String data) throws Exception{
         if (data == null || data.trim().equals("")) {
             throw new Exception("validate false.useless data.");
         }
     }
-
 }
