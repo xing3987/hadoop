@@ -131,31 +131,82 @@ partitioned by (dt string, dim string);
 -- 2 日新维度统计报表sql开发(利用多重插入语法)
 from etl_user_new_day
 
-insert into table dim_user_new_day partition(day='2019-04-18',dim='0000')
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0000')
 select 'all','all','all','all',count(1)
 where dt='2019-04-18'
 
-
-insert into table dim_user_new_day partition(day='2019-04-18',dim='0001')
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0001')
 select 'all','all','all',app_ver_name,count(1)
 where dt='2019-04-18'
 group by app_ver_name
 
-
-
-insert into table dim_user_new_day partition(day='2019-04-18',dim='0010')
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0010')
 select 'all','all',release_channel,'all',count(1)
 where dt='2019-04-18'
 group by release_channel
 
-
-insert into table dim_user_new_day partition(day='2019-04-181',dim='0011')
+insert into table dim_user_new_day partition(dt='2019-04-181',dim='0011')
 select 'all','all',release_channel,app_ver_name,count(1)
 where dt='2019-04-18'
 group by release_channel,app_ver_name
 
-
-insert into table dim_user_new_day partition(day='2019-04-18',dim='0100')
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0100')
 select 'all',city,'all','all',count(1)
 where dt='2019-04-18'
 group by city
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0101')
+select 'all',city,'all',app_ver_name,count(1)
+where dt='2019-04-18'
+group by city,app_ver_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0110')
+select 'all',city,release_channel,'all',count(1)
+where dt='2019-04-18'
+group by city,release_channel
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0111')
+select 'all',city,release_channel,app_ver_name,count(1)
+where dt='2019-04-18'
+group by city,release_channel,app_ver_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1000')
+select os_name,'all','all','all',count(1)
+where dt='2019-04-18'
+group by os_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1001')
+select os_name,'all','all',app_ver_name,count(1)
+where dt='2019-04-18'
+group by os_name,app_ver_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1010')
+select os_name,'all',release_channel,'all',count(1)
+where dt='2019-04-18'
+group by os_name,release_channel
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1011')
+select os_name,'all',release_channel,app_ver_name,count(1)
+where dt='2019-04-18'
+group by os_name,release_channel,app_ver_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1100')
+select os_name,city,'all','all',count(1)
+where dt='2019-04-18'
+group by os_name,city
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1101')
+select os_name,city,'all',app_ver_name,count(1)
+where dt='2019-04-18'
+group by os_name,city,app_ver_name
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1110')
+select os_name,city,release_channel,'all',count(1)
+where dt='2019-04-18'
+group by os_name,city,release_channel
+
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='1111')
+select os_name,city,release_channel,app_ver_name,count(1)
+where dt='2019-04-18'
+group by os_name,city,release_channel,app_ver_name
+
