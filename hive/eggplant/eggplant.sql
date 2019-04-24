@@ -145,7 +145,7 @@ select 'all','all',release_channel,'all',count(1)
 where dt='2019-04-18'
 group by release_channel
 
-insert into table dim_user_new_day partition(dt='2019-04-181',dim='0011')
+insert into table dim_user_new_day partition(dt='2019-04-18',dim='0011')
 select 'all','all',release_channel,app_ver_name,count(1)
 where dt='2019-04-18'
 group by release_channel,app_ver_name
