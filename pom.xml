@@ -13,6 +13,7 @@
         <module>hive</module>
         <module>hadoops</module>
         <module>hbase</module>
+        <module>Lucene</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -9,6 +9,7 @@
         <module name="hadoops" />
         <module name="hbase" />
         <module name="hive" />
+        <module name="Lucene" />
         <module name="zookeeper" />
       </profile>
     </annotationProcessing>
@@ -17,6 +18,7 @@
       <module name="hadoops" target="1.8" />
       <module name="hbase" target="1.8" />
       <module name="hive" target="1.8" />
+      <module name="Lucene" target="1.8" />
       <module name="zookeeper" target="1.8" />
     </bytecodeTargetLevel>
   </component>
