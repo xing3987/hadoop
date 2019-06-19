@@ -211,6 +211,7 @@ public class LuceneApiDemo {
 
         Query query1 = new TermQuery(new Term("title", "张"));
         Query query2 = new TermQuery(new Term("content", "老"));
+        //BooleanClause bc1 = new BooleanClause(query1, BooleanClause.Occur.SHOULD); 或者
         BooleanClause bc1 = new BooleanClause(query1, BooleanClause.Occur.MUST);
         BooleanClause bc2 = new BooleanClause(query2, BooleanClause.Occur.MUST_NOT);
         BooleanQuery boolQuery = new BooleanQuery.Builder().add(bc1).add(bc2).build();
