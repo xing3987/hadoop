@@ -7,13 +7,14 @@
     <groupId>hadoop</groupId>
     <artifactId>hadoop</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>zookeeper</module>
         <module>hive</module>
         <module>hadoops</module>
         <module>hbase</module>
         <module>Lucene</module>
+        <module>flume</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
