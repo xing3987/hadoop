@@ -16,6 +16,7 @@ import java.io.RandomAccessFile;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * flume source 的生命周期：构造器 -> configure -> start -> processor.process
@@ -29,6 +30,7 @@ public class TailFileSource extends AbstractSource implements EventDrivenSource,
     private Long interval;
     private ExecutorService executor;
     private static final Logger logger = LoggerFactory.getLogger(TailFileSource.class);
+    private FileRunnable fileRunnable;
 
     @Override
     public void configure(Context context) {
@@ -42,7 +44,7 @@ public class TailFileSource extends AbstractSource implements EventDrivenSource,
     public synchronized void start() {
         executor = Executors.newSingleThreadExecutor();//创建一个单线程的线程池
         //定义一个实现runnable接口的类
-        FileRunnable fileRunnable = new FileRunnable(filePath, interval, charset, getChannelProcessor(), posiFile);
+        fileRunnable = new FileRunnable(filePath, interval, charset, getChannelProcessor(), posiFile);
         executor.submit(fileRunnable);//提交任务
         //调用父类的start方法
         super.start();
@@ -50,6 +52,19 @@ public class TailFileSource extends AbstractSource implements EventDrivenSource,
 
     @Override
     public synchronized void stop() {
+        fileRunnable.setFlag(false);
+        executor.shutdown();
+        //如果executor停不了
+        while (!executor.isTerminated()) {
+            logger.debug("Waiting for filer executor service to stop");
+            try {
+                executor.awaitTermination(500, TimeUnit.MILLISECONDS);//等等0.5s
+            } catch (InterruptedException e) {
+                logger.debug("Interrupted while waiting for exec executor service "
+                        + "to stop. Just exiting.");
+                Thread.currentThread().interrupt();
+            }
+        }
         super.stop();
     }
 
