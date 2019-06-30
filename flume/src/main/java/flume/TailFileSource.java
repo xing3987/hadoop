@@ -119,11 +119,13 @@ public class TailFileSource extends AbstractSource implements EventDrivenSource,
                         //将数据发送给Channel
                         logger.info("line:" + line);
                         channelProcessor.processEvent(EventBuilder.withBody(line.getBytes()));
+                        logger.info("********after processEvent.**********");
                         //获取最新的偏移量，然后更新偏移量
                         offset = raf.getFilePointer();
                         //将偏移量写入到位置文件中
                         FileUtils.writeStringToFile(positionFile, offset + "");
                     } else {
+                        logger.info("begin sleep........");
                         Thread.sleep(interval);
                     }
                 } catch (IOException e) {
