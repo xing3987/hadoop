@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +20,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * flume source 的生命周期：构造器 -> configure -> start -> processor.process
  * 1.读取配置文件：（配置文件的内容：读取哪个文件、编码集、偏移量写到哪个文件、多长时间检查一下文件是否有新内容）
+ * 运行：
+ * 1.把自定义jar包放入lib中
+ * 2.bin/flume-ng agent -n a1(agent-name) -f conf/cus.conf(conf-path)
+ *      -c conf -Dflume.root.logger=INFO,console
  */
 public class TailFileSource extends AbstractSource implements EventDrivenSource, Configurable {
 
