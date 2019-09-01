@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class PropertyHelper {
 
-    private static Properties prop=null;
+    private static volatile Properties prop=null;
 
     private PropertyHelper() {
     }
