@@ -42,12 +42,12 @@ public class HbaseClientDemo {
     }
 
     @Test
-    public void alterTable() throws Exception{
-        HTableDescriptor tableDescriptor=admin.getTableDescriptor(TableName.valueOf("user_info"));//得到表对象
-        HColumnDescriptor hColumnDescriptor=new HColumnDescriptor("other_info");//创建一个新的列族
+    public void alterTable() throws Exception {
+        HTableDescriptor tableDescriptor = admin.getTableDescriptor(TableName.valueOf("user_info"));//得到表对象
+        HColumnDescriptor hColumnDescriptor = new HColumnDescriptor("other_info");//创建一个新的列族
         hColumnDescriptor.setBloomFilterType(BloomType.ROWCOL);//设置该列族的布隆过滤器，用来查找数据
         tableDescriptor.addFamily(hColumnDescriptor);//添加新的列族到表中
-        admin.modifyTable(TableName.valueOf("user_info"),tableDescriptor);//将修改过的表对象提交给admin处理
+        admin.modifyTable(TableName.valueOf("user_info"), tableDescriptor);//将修改过的表对象提交给admin处理
     }
 
     @Test
@@ -60,19 +60,19 @@ public class HbaseClientDemo {
     }
 
     @Test
-    public void put() throws Exception{
-        Table table=conn.getTable(TableName.valueOf("user_info"));// 获取一个操作指定表的table对象,进行DML操作
-        Put put=new Put(Bytes.toBytes("001"));// 构造要插入的数据为一个Put类型(一个put对象只能对应一个rowkey)的对象
-        put.addColumn(Bytes.toBytes("base_info"),Bytes.toBytes("username"),Bytes.toBytes("张三"));
-        put.addColumn(Bytes.toBytes("base_info"),Bytes.toBytes("age"),Bytes.toBytes("18"));
-        put.addColumn(Bytes.toBytes("extra_info"),Bytes.toBytes("addr"),Bytes.toBytes("上海"));
+    public void put() throws Exception {
+        Table table = conn.getTable(TableName.valueOf("user_info"));// 获取一个操作指定表的table对象,进行DML操作
+        Put put = new Put(Bytes.toBytes("001"));// 构造要插入的数据为一个Put类型(一个put对象只能对应一个rowkey)的对象
+        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三"));
+        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes("18"));
+        put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("上海"));
 
-        Put put2=new Put(Bytes.toBytes("002"));// 构造要插入的数据为一个Put类型(一个put对象只能对应一个rowkey)的对象
-        put.addColumn(Bytes.toBytes("base_info"),Bytes.toBytes("username"),Bytes.toBytes("李四"));
-        put.addColumn(Bytes.toBytes("base_info"),Bytes.toBytes("age"),Bytes.toBytes("22"));
-        put.addColumn(Bytes.toBytes("extra_info"),Bytes.toBytes("addr"),Bytes.toBytes("天津"));
+        Put put2 = new Put(Bytes.toBytes("002"));// 构造要插入的数据为一个Put类型(一个put对象只能对应一个rowkey)的对象
+        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("李四"));
+        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes("22"));
+        put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("天津"));
 
-        List<Put> puts=new ArrayList<>();
+        List<Put> puts = new ArrayList<>();
         puts.add(put);
         puts.add(put2);
 
@@ -82,34 +82,90 @@ public class HbaseClientDemo {
 
 
     /**
-     * 循环插入大量数据
+     * 循环插入大量数据,方法一使用puts自动优化
+     *
      * @throws Exception
      */
     @Test
-    public void testManyPuts() throws Exception{
+    public void testManyPuts() throws Exception {
 
         Table table = conn.getTable(TableName.valueOf("user_info"));
         ArrayList<Put> puts = new ArrayList<>();
-
-        for(int i=0;i<100000;i++){
-            Put put = new Put(Bytes.toBytes(""+i));
-            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三"+i));
-            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes((18+i)+""));
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000000; i++) {
+            Put put = new Put(Bytes.toBytes("" + i));
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes((18 + i) + ""));
             put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("北京"));
 
             puts.add(put);
         }
-
         table.put(puts);
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+    }
 
+    /**
+     * 循环插入大量数据优化！方法二，关闭写前日志，优化缓存
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testManyPutsFast() throws Exception {
+
+        HTable table = (HTable)conn.getTable(TableName.valueOf("user_info"));
+        table.setAutoFlush(false); //关闭自动缓存
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10000000; i++) {
+            Put put = new Put(Bytes.toBytes("" + i));
+            put.setWriteToWAL(false); //关闭写前日志
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes((18 + i) + ""));
+            put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("北京"));
+            table.put(put);
+
+            if(i % 2000 == 0){
+                table.flushCommits();//手动提交
+            }
+        }
+        table.flushCommits();//手动提交最后的数据
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+    }
+
+    /**
+     * 循环插入大量数据优化！方法三，使用最新api
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testManyPutsNew() throws Exception {
+
+        HTable table = (HTable)conn.getTable(TableName.valueOf("user_info"));
+        table.setAutoFlushTo(false); //关闭自动缓存
+        ArrayList<Put> puts = new ArrayList<>();
+        long start = System.currentTimeMillis();
+        table.setWriteBufferSize(5 * 1024 * 1024);//设置缓存大小
+        for (int i = 0; i < 10000000; i++) {
+            Put put = new Put(Bytes.toBytes("" + i));
+            put.setWriteToWAL(false); //关闭写前日志
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
+            put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes((18 + i) + ""));
+            put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("北京"));
+            puts.add(put);
+        }
+        table.flushCommits();//手动提交最后的数据
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
     }
 
 
     @Test
-    public void delete() throws Exception{
+    public void delete() throws Exception {
         Table table = conn.getTable(TableName.valueOf("user_info"));
 
-        Delete delete=new Delete(Bytes.toBytes("001"));// 构造一个对象封装要删除的数据信息
+        Delete delete = new Delete(Bytes.toBytes("001"));// 构造一个对象封装要删除的数据信息
         Delete delete2 = new Delete(Bytes.toBytes("002"));
         delete2.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"));
 
@@ -123,38 +179,40 @@ public class HbaseClientDemo {
 
     /**
      * 查
+     *
      * @throws Exception
      */
     @Test
-    public void get() throws Exception{
+    public void get() throws Exception {
         Table table = conn.getTable(TableName.valueOf("user_info"));
-        Get get=new Get(Bytes.toBytes("002"));
-        Result result=table.get(get);
-        byte[] value=result.getValue(Bytes.toBytes("base_info"),Bytes.toBytes("age"));// 从结果中取用户指定的某个key的value
+        Get get = new Get(Bytes.toBytes("002"));
+        Result result = table.get(get);
+        byte[] value = result.getValue(Bytes.toBytes("base_info"), Bytes.toBytes("age"));// 从结果中取用户指定的某个key的value
         System.out.println(new String(value));
 
         // 遍历整行结果中的所有kv单元格
-        CellScanner scanner=result.cellScanner();
-        while (scanner.advance()){
-            Cell cell=scanner.current();
-            byte[] rowArray=cell.getRowArray();
-            byte[] familyArray=cell.getFamilyArray();
-            byte[] qualifierArray=cell.getQualifierArray();
-            byte[] valueArray=cell.getValueArray();
-            System.out.println("行键: "+new String(rowArray,cell.getRowOffset(),cell.getRowLength()));
-            System.out.println("列族名: "+new String(familyArray,cell.getFamilyOffset(),cell.getFamilyLength()));
-            System.out.println("列名: "+new String(qualifierArray,cell.getQualifierOffset(),cell.getQualifierLength()));
-            System.out.println("value: "+new String(valueArray,cell.getValueOffset(),cell.getValueLength()));
+        CellScanner scanner = result.cellScanner();
+        while (scanner.advance()) {
+            Cell cell = scanner.current();
+            byte[] rowArray = cell.getRowArray();
+            byte[] familyArray = cell.getFamilyArray();
+            byte[] qualifierArray = cell.getQualifierArray();
+            byte[] valueArray = cell.getValueArray();
+            System.out.println("行键: " + new String(rowArray, cell.getRowOffset(), cell.getRowLength()));
+            System.out.println("列族名: " + new String(familyArray, cell.getFamilyOffset(), cell.getFamilyLength()));
+            System.out.println("列名: " + new String(qualifierArray, cell.getQualifierOffset(), cell.getQualifierLength()));
+            System.out.println("value: " + new String(valueArray, cell.getValueOffset(), cell.getValueLength()));
 
         }
     }
 
     /**
      * 按行键范围查询数据
+     *
      * @throws Exception
      */
     @Test
-    public void testScan() throws Exception{
+    public void testScan() throws Exception {
 
         Table table = conn.getTable(TableName.valueOf("user_info"));
 
@@ -166,12 +224,12 @@ public class HbaseClientDemo {
 
         Iterator<Result> iterator = scanner.iterator();
 
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
 
             Result result = iterator.next();
             // 遍历整行结果中的所有kv单元格
             CellScanner cellScanner = result.cellScanner();
-            while(cellScanner.advance()){
+            while (cellScanner.advance()) {
                 Cell cell = cellScanner.current();
 
                 byte[] rowArray = cell.getRowArray();  //本kv所属的行键的字节数组
@@ -179,10 +237,10 @@ public class HbaseClientDemo {
                 byte[] qualifierArray = cell.getQualifierArray();  //列名的字节数据
                 byte[] valueArray = cell.getValueArray(); // value的字节数组
 
-                System.out.println("行键: "+new String(rowArray,cell.getRowOffset(),cell.getRowLength()));
-                System.out.println("列族名: "+new String(familyArray,cell.getFamilyOffset(),cell.getFamilyLength()));
-                System.out.println("列名: "+new String(qualifierArray,cell.getQualifierOffset(),cell.getQualifierLength()));
-                System.out.println("value: "+new String(valueArray,cell.getValueOffset(),cell.getValueLength()));
+                System.out.println("行键: " + new String(rowArray, cell.getRowOffset(), cell.getRowLength()));
+                System.out.println("列族名: " + new String(familyArray, cell.getFamilyOffset(), cell.getFamilyLength()));
+                System.out.println("列名: " + new String(qualifierArray, cell.getQualifierOffset(), cell.getQualifierLength()));
+                System.out.println("value: " + new String(valueArray, cell.getValueOffset(), cell.getValueLength()));
             }
             System.out.println("----------------------");
         }
