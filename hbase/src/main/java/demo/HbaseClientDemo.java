@@ -68,9 +68,9 @@ public class HbaseClientDemo {
         put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("上海"));
 
         Put put2 = new Put(Bytes.toBytes("002"));// 构造要插入的数据为一个Put类型(一个put对象只能对应一个rowkey)的对象
-        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("李四"));
-        put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes("22"));
-        put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("天津"));
+        put2.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("李四"));
+        put2.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes("22"));
+        put2.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("天津"));
 
         List<Put> puts = new ArrayList<>();
         puts.add(put);
@@ -92,7 +92,7 @@ public class HbaseClientDemo {
         Table table = conn.getTable(TableName.valueOf("user_info"));
         ArrayList<Put> puts = new ArrayList<>();
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             Put put = new Put(Bytes.toBytes("" + i));
             put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
             put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("age"), Bytes.toBytes((18 + i) + ""));
@@ -102,7 +102,7 @@ public class HbaseClientDemo {
         }
         table.put(puts);
         long end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.out.println(end - start);//48751
     }
 
     /**
@@ -117,7 +117,7 @@ public class HbaseClientDemo {
         table.setAutoFlush(false); //关闭自动缓存
 
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             Put put = new Put(Bytes.toBytes("" + i));
             put.setWriteToWAL(false); //关闭写前日志
             put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
@@ -131,11 +131,11 @@ public class HbaseClientDemo {
         }
         table.flushCommits();//手动提交最后的数据
         long end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.out.println(end - start);//29709
     }
 
     /**
-     * 循环插入大量数据优化！方法三，使用最新api
+     * 循环插入大量数据优化！方法三，使用最新api(经过实际测试，使用该方法插入数据操作是最快的)
      *
      * @throws Exception
      */
@@ -146,8 +146,8 @@ public class HbaseClientDemo {
         table.setAutoFlushTo(false); //关闭自动缓存
         ArrayList<Put> puts = new ArrayList<>();
         long start = System.currentTimeMillis();
-        table.setWriteBufferSize(5 * 1024 * 1024);//设置缓存大小
-        for (int i = 0; i < 10000000; i++) {
+        table.setWriteBufferSize(5 * 1024 * 1024);//手动设置缓存大小
+        for (int i = 0; i < 1000000; i++) {
             Put put = new Put(Bytes.toBytes("" + i));
             put.setWriteToWAL(false); //关闭写前日志
             put.addColumn(Bytes.toBytes("base_info"), Bytes.toBytes("username"), Bytes.toBytes("张三" + i));
@@ -157,7 +157,7 @@ public class HbaseClientDemo {
         }
         table.flushCommits();//手动提交最后的数据
         long end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.out.println(end - start);//4270
     }
 
 
@@ -219,7 +219,9 @@ public class HbaseClientDemo {
         // 包含起始行键，不包含结束行键,但是如果真的想查询出末尾的那个行键，那么，可以在末尾行键上拼接一个不可见的字节（\000）
         //Scan scan = new Scan("10".getBytes(), "10000".getBytes());
         Scan scan = new Scan("10".getBytes(), "10000\001".getBytes());
-
+        /*或者分别指定开始和结束rowkey
+        scan.setStartRow("10".getBytes());
+        scan.setStopRow("10000\001".getBytes());*/
         ResultScanner scanner = table.getScanner(scan);
 
         Iterator<Result> iterator = scanner.iterator();
