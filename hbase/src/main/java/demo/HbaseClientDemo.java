@@ -106,7 +106,7 @@ public class HbaseClientDemo {
     }
 
     /**
-     * 循环插入大量数据优化！方法二，关闭写前日志，优化缓存
+     * 循环插入大量数据优化！方法二，关闭写前日志，优化缓存(经过实际测试，使用该方法插入数据操作是最快的)
      *
      * @throws Exception
      */
@@ -131,11 +131,11 @@ public class HbaseClientDemo {
         }
         table.flushCommits();//手动提交最后的数据
         long end = System.currentTimeMillis();
-        System.out.println(end - start);//29709
+        System.out.println(end - start);//35460
     }
 
     /**
-     * 循环插入大量数据优化！方法三，使用最新api(经过实际测试，使用该方法插入数据操作是最快的)
+     * 循环插入大量数据优化！方法三，使用最新api
      *
      * @throws Exception
      */
@@ -155,9 +155,10 @@ public class HbaseClientDemo {
             put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("北京"));
             puts.add(put);
         }
+        table.put(puts);
         table.flushCommits();//手动提交最后的数据
         long end = System.currentTimeMillis();
-        System.out.println(end - start);//4270
+        System.out.println(end - start);//44129
     }
 
 
