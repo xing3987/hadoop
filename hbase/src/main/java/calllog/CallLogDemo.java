@@ -71,9 +71,9 @@ public class CallLogDemo {
         //2+1+11+1+14+3+11+1+7=48长度
         String rowkey = regNo + "," + callerId + "," + callTime + "," + "0" + "," + calleeId + "," + duration;
         byte[] rowid = Bytes.toBytes(rowkey);
-        Put put=new Put(rowid);
-        put.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("callerPos"),Bytes.toBytes("北京"));
-        put.addColumn(Bytes.toBytes("f1"),Bytes.toBytes("calleePos"),Bytes.toBytes("上海"));
+        Put put = new Put(rowid);
+        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("callerPos"), Bytes.toBytes("北京"));
+        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("calleePos"), Bytes.toBytes("上海"));
         table.put(put);
     }
 

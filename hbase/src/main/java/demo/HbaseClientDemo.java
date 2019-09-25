@@ -113,7 +113,7 @@ public class HbaseClientDemo {
     @Test
     public void testManyPutsFast() throws Exception {
 
-        HTable table = (HTable)conn.getTable(TableName.valueOf("user_info"));
+        HTable table = (HTable) conn.getTable(TableName.valueOf("user_info"));
         table.setAutoFlush(false); //关闭自动缓存
 
         long start = System.currentTimeMillis();
@@ -125,7 +125,7 @@ public class HbaseClientDemo {
             put.addColumn(Bytes.toBytes("extra_info"), Bytes.toBytes("addr"), Bytes.toBytes("北京"));
             table.put(put);
 
-            if(i % 2000 == 0){
+            if (i % 2000 == 0) {
                 table.flushCommits();//手动提交
             }
         }
@@ -142,7 +142,7 @@ public class HbaseClientDemo {
     @Test
     public void testManyPutsNew() throws Exception {
 
-        HTable table = (HTable)conn.getTable(TableName.valueOf("user_info"));
+        HTable table = (HTable) conn.getTable(TableName.valueOf("user_info"));
         table.setAutoFlushTo(false); //关闭自动缓存
         ArrayList<Put> puts = new ArrayList<>();
         long start = System.currentTimeMillis();

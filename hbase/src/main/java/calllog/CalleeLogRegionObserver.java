@@ -54,8 +54,8 @@ public class CalleeLogRegionObserver extends BaseRegionObserver {
         List<Cell> calleePos = put.get(Bytes.toBytes("f1"), Bytes.toBytes("callerPos"));
         List<Cell> callerPos = put.get(Bytes.toBytes("f1"), Bytes.toBytes("calleePos"));
 
-        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("callerPos"),callerPos.get(0).getValueArray());
-        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("calleePos"),calleePos.get(0).getValueArray());
+        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("callerPos"), callerPos.get(0).getValueArray());
+        put.addColumn(Bytes.toBytes("f1"), Bytes.toBytes("calleePos"), calleePos.get(0).getValueArray());
         Table t = e.getEnvironment().getTable(TableName.valueOf("calllogs"));
         t.put(newPut);
 

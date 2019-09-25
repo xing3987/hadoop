@@ -8,7 +8,7 @@ public class Util {
         //区域00-99
         int hash = (callerId + callTime.substring(0, 6)).hashCode();
         hash = (hash & Integer.MAX_VALUE) % 100; //转换为正数0~99
-        DecimalFormat df=new DecimalFormat("00");//个位数前面补0
+        DecimalFormat df = new DecimalFormat("00");//个位数前面补0
         return df.format(hash);
     }
 }

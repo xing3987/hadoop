@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class MyRegionObserver extends BaseRegionObserver {
 
-    private void outInfo(String str){
+    private void outInfo(String str) {
         try {
-            FileWriter fw = new FileWriter("/home/centos/coprocessor.txt",true);
+            FileWriter fw = new FileWriter("/home/centos/coprocessor.txt", true);
             fw.write(str + "\r\n");
             fw.close();
         } catch (Exception e) {
