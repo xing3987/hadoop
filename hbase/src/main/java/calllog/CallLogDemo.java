@@ -2,6 +2,8 @@ package calllog;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -29,8 +31,24 @@ public class CallLogDemo {
     }
 
     @Test
+    public void createTable() throws Exception {
+        //创建表名对象
+        TableName tableName = TableName.valueOf("calllogs"); //如果写成t1则ns1是数据库名字
+        //创建表描述符对象
+        HTableDescriptor tbl = new HTableDescriptor(tableName);
+
+        //创建列族描述符
+        HColumnDescriptor col = new HColumnDescriptor("f1");
+        //保留删除的cell
+        col.setKeepDeletedCells(true);
+        //col.setTimeToLive(20); //设定数据保存的时间
+        tbl.addFamily(col);
+        admin.createTable(tbl);
+    }
+
+    @Test
     public void put() throws Exception {
-        TableName tableName = TableName.valueOf("t1");
+        TableName tableName = TableName.valueOf("calllogs");
         Table table = conn.getTable(tableName);
 
         //设计主叫的rowkey
