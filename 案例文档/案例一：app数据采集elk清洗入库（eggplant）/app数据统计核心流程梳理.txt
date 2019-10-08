@@ -1,0 +1,17 @@
+﻿1/数据采集  flume   dir-->hdfs  (行最大长度，channel的事务批条数  >=  倍数*  sink的batch-size批条数  ，如果崩溃，下次启动会重复采数据--> spark会补充自定义source)
+
+2/预处理   mapreduce程序(数据清洗、解析)   --> 开发shell脚本启动 --> 把脚本配置成crontab定时任务
+
+3/导入数据到ods_app_log原始数据表的新分区 --> alter table ods_app_log add partition(day='2017-09-21') location '/flume/app-log/clean/2017-09-21'  --> 开发shell脚本，定时运行
+
+4/ hive数据仓库etl --> 各种hive ql编写 --> 写入脚本，定义启动 
+
+5/ 数据迁移 --> sqoop export ...(编码坑)
+
+6/ web展示系统开发 --> echarts + springmvc+spring+mybatis ==> mysql  (各种js坑，css坑)
+
+7 多重分区表要合成一层分区
+
+create table dim_user_new_days(os_name string,city string,release_channel string,app_ver_name string,cnts string,dt string) partitioned by(day string) row format delimited fields terminated by ',';
+
+insert into table dim_user_new_days partition(day="2019-04-18") select os_name,city,release_channel,app_ver_name,cnts,dt from dim_user_new_day where dt="2019-04-18";
